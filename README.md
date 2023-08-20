@@ -20,7 +20,6 @@ move install/include and lib folder to DMS folder
 # Build DMS
 remenber to change libncnn.a path in CMakeLists.txt
 ```
-$ mkdir build && cd build
-$ cmake ..
+$ cmake .
 $ make -j`nproc`
 ```
