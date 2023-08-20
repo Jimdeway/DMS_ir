@@ -23,7 +23,7 @@ remenber to change libncnn.a path in CMakeLists.txt
 $ cmake .
 $ make -j`nproc`
 ```
-#Reference
+# Reference
 PFLD_GhostOne:https://github.com/AnthonyF333/PFLD_GhostOne
 PFLD-ncnn:https://github.com/Brightchu/pfld-ncnn
 mobilefacenet:https://github.com/liguiyuan/mobilefacenet-ncnn
