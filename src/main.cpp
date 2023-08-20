@@ -37,7 +37,7 @@
 
 
 #include "mobilefacenet.h"
-
+#include "UltraFace.hpp"
 
 
 using namespace std;
