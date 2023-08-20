@@ -1,11 +1,22 @@
+
+
+//ncnn ™∫¨€®Ã¿… 
 #include "benchmark.h"
 #include "cpu.h"
 #include "datareader.h"
 #include "layer.h"
 #include "net.h"
 #include "gpu.h"
-
+//
+ 
 #include <iostream>
+#include <stdio.h>
+#include <vector>
+#include <algorithm>
+#include <float.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <cstdio>
 
 #if defined(USE_NCNN_SIMPLEOCV)
 #include "simpleocv.h"
@@ -14,27 +25,16 @@
 #include <opencv2/highgui/highgui_c.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #endif
-#include <stdio.h>
-#include <vector>
-#include <algorithm>
-#include <float.h>
 
+//©I≥Íagx≥‚•z™∫≈X∞ ¨€®Ã¿… 
 #include <alsa/asoundlib.h>
-#include <pthread.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include <stdlib.h>
+//•≠¶Ê§∆pthread¨€®Ã¿…
+#include <pthread.h>
 
-
-
-//#include <windows.h>
-#include <unistd.h>
-#include <cstdio>
-
-
-#include "UltraFace.hpp"
 
 #include "mobilefacenet.h"
 
@@ -124,22 +124,10 @@ double totalClose =0;
 double perclos =0;
 
 
-
-
-
-
-
-
-
-
 std::vector<cv::Point3d> model_points;
 
 
-
-
-
-
-
+//¿x¶s≠µ¿…∏Í∞T 
 struct args{
 	char path[128];
 	int sec;
@@ -147,10 +135,13 @@ struct args{
 };
 
 
-
+//agx ≥‚•z≈X∞  
 void *play_thread(void* arg)
 {
+	//√ˆ™˘•Œ∫Xº–
 	soundswitch = false;
+	
+	
   struct args* arggg = (struct args*)arg;
 	unsigned int pcm, tmp, dir;
 	unsigned int rate, channels, seconds;
@@ -164,7 +155,8 @@ void *play_thread(void* arg)
   
 	int file = open(arggg->path,O_RDONLY);
 	
-
+	//∞—º∆≥]©w
+	//®Ã∑”≠µ¿…™∫ÆÊ¶° 
 	rate 	 = 16000;
 	channels = 1;
 	seconds  = 1;
@@ -245,12 +237,18 @@ void *play_thread(void* arg)
 	snd_pcm_drain(pcm_handle);
 	snd_pcm_close(pcm_handle);
 	free(buff);
+	
+	//¡n≠µøÔæ‹™Ï©l§∆&∂}™˘•Œ∫Xº–
     sound_select=4;
     soundswitch = true;
 	//}
     return 0;
 }
 
+
+//∞—¶“https://blog.csdn.net/c20081052/article/details/89479970
+//∞—¶“https://github.com/yuenshome/yuenshome.github.io/issues/9
+//∞—¶“https://blog.csdn.net/u014090429/article/details/100762308
 bool isRotationMatrix(Mat &R)
 {
     Mat Rt;
@@ -287,6 +285,7 @@ Vec3f rotationMatrixToEulerAngles(Mat &R)
  
 }
 
+//µ¯ƒ±§∆¥˙∏’º⁄©‘®§Æƒ™G
 void plot_pose_cube(cv::Mat& img, float yaw, float pitch, float roll, float tdx, float tdy, float size){
     float p = pitch * CV_PI / 180;
     float y = -(yaw * CV_PI / 180);
@@ -327,7 +326,8 @@ void plot_pose_cube(cv::Mat& img, float yaw, float pitch, float roll, float tdx,
 
 
 
-
+//ncnn™∫©x§ËΩd®“µ{¶° 
+//•D≠n•ŒYOLOV5_V62
 //#define YOLOV5_V60 1 //YOLOv5 v6.0
 #define YOLOV5_V62 1 //YOLOv5 v6.2 export  onnx model method https://github.com/shaoshengsong/yolov5_62_export_ncnn
 
@@ -577,14 +577,14 @@ static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects)
     ncnn::Net yolov5;
 
     //yolov5.opt.use_vulkan_compute = true;
-     //yolov5.opt.use_bf16_storage = true;
+    //yolov5.opt.use_bf16_storage = true;
     
 
     // original pretrained model from https://github.com/ultralytics/yolov5
     // the ncnn model https://github.com/nihui/ncnn-assets/tree/master/models
 #if YOLOV5_V62
     
-   
+   		//•D≠nº“´¨¶Ï∏m≥]©w 
         if (yolov5.load_param("./model/y70000-opt.param"))
             exit(-1);
         if (yolov5.load_model("./model/y70000-opt.bin"))
@@ -651,8 +651,11 @@ static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects)
     in_pad.substract_mean_normalize(0, norm_vals);
 
     ncnn::Extractor ex = yolov5.create_extractor();
-   // ex.set_light_mode(true);
+   	// ex.set_light_mode(true);
+   
+   	//≥]©w∞—ªPπB∫‚™∫cpuº∆∂q
     ex.set_num_threads(4);
+    //
     ex.input("images", in_pad);
 
     std::vector<Object> proposals;
@@ -774,11 +777,11 @@ static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects)
 
 
 
-
-static void draw_objects2(cv::Mat& bgr, const std::vector<Object>& objects)
+//µephone&smoke™∫bbox 
+static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects)
 {
-    
-    
+    //rect:bbox∏Í∞T(x y(•™§W≥ª¬I) width height) 
+    //prob ´H§ﬂ≠» 
 	float temp = 0;
 	float smoke_prob=0;
 	float phone_prob=0;
@@ -792,6 +795,9 @@ static void draw_objects2(cv::Mat& bgr, const std::vector<Object>& objects)
         int x2 = obj.rect.x + obj.rect.width;
         int centerX = (x1 + x2) / 2;
 //        if(obj.prob> 0.5f && centerX > bgr.cols/2){
+		
+		
+		//ßP¬_bbox¶bµe≠±•k•b√‰
         if(centerX > bgr.cols/2){
            // fprintf(stderr, "%d = %.5f at %.2f %.2f %.2f x %.2f\n", obj.label, obj.prob,
             //    obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height);
@@ -818,7 +824,7 @@ static void draw_objects2(cv::Mat& bgr, const std::vector<Object>& objects)
         
     }
 
-
+	//smokeµebbox±¯•ÛßP¬_ 
     if(smoke_prob>0.70)
   	{
 		
@@ -839,6 +845,7 @@ static void draw_objects2(cv::Mat& bgr, const std::vector<Object>& objects)
 	}
 
  	
+ 	//phoneµebbox±¯•ÛßP¬_ 
   	if(phone_prob>0.78)
   	{
 		phone_c++;
@@ -862,6 +869,8 @@ static void draw_objects2(cv::Mat& bgr, const std::vector<Object>& objects)
     //cv::waitKey(1);
 }
 
+
+//≠p∫‚≥¨≤¥•Œ
 float eye_ear(int eye_top1 , int eye_top2, int eye_bottom1, int eye_bottom2, int eye_left, int eye_right){
 	
 	float A = abs(eye_top1 - eye_bottom1);
@@ -871,8 +880,6 @@ float eye_ear(int eye_top1 , int eye_top2, int eye_bottom1, int eye_bottom2, int
 	return ear;
 
 }
-
-//Ë¶ÅÂ∞çÈªû
 float ear(float *out,int landmark_size_width, int landmark_size_height, int x1, int y1) {
 	
 	float eye_left = eye_ear(out[123]*landmark_size_height+y1, out[127]*landmark_size_height+y1,
@@ -892,7 +899,7 @@ float ear(float *out,int landmark_size_width, int landmark_size_height, int x1, 
 
 
 
-
+//≠º´»∫ŒØv´·≥B≤z 
 void sleepimg(){
 
 	
@@ -901,10 +908,8 @@ void sleepimg(){
     light_f = false;
     temperature_f = false;
 
-	//ÁÇ∫‰∫ÜÂè™Ë∑ë‰∏ÄÊ¨°
 	if(flag55 ){
 
-			//py("./python/led_o.py");
 			flag55 =false;
 			flag5 = true;
 
@@ -917,7 +922,8 @@ void sleepimg(){
 
 
 
-
+//¡y≥°√ˆ¡‰¬I(PFLD)º“´¨∏¸§JªP∏Í∞T≈™®˙ 
+//∞—¶“https://github.com/Brightchu/pfld-ncnn
 static int landmark_detector(ncnn::Net &pfld, cv::Mat &bgr, float * landmarks,  int img_size = 112)
 {
     ncnn::Mat out;
@@ -948,7 +954,7 @@ static int landmark_detector(ncnn::Net &pfld, cv::Mat &bgr, float * landmarks,  
 
 
 
-
+//æræp§¿§ﬂªPØh≥“ßP¬_ 
 void driveFaceBehavior(float ear ,char turn)
 {
 
@@ -956,7 +962,7 @@ void driveFaceBehavior(float ear ,char turn)
         //printf("totalClose = %f\n",totalClose);
     //flagdraw = true;
 
-
+	//Øh≥“ßP¬_
     if(eye_flag) 
 	{
 		start_t = ncnn::get_current_time();
@@ -989,6 +995,10 @@ void driveFaceBehavior(float ear ,char turn)
 		//flagdraw = false;
 
     }
+    ////////////////////////////////////////
+    
+    
+    //§¿§ﬂßP¬_
     if(turn == 1){
 		head_f = false;
         sound_select=0;
@@ -1031,9 +1041,10 @@ void driveFaceBehavior(float ear ,char turn)
 }
 
 
-
+//≠º´»∫ŒØvßP¬_ 
 void passengerFaceBehavior(float ear)
 {
+	
 	if(ear < 0.098f){
 		
 		if(eye_flag2) 
@@ -1064,12 +1075,8 @@ void passengerFaceBehavior(float ear)
 		}
 		//printf("%d\n",(ncnn::get_current_time() - start_t2_n)/1000.f);
 		if((double)(ncnn::get_current_time() - start_t2_n)/1000.f > 2.0f){
-			//ÁÇ∫‰∫ÜÂè™Ë∑ë‰∏ÄÊ¨°
 			if(flag5 ){     //reset
 
-	
-				//py("./python/led_x.py");
-				
 				flag5 =false;
 				flag55 = true;
 				flag_sleep = true;
@@ -1085,6 +1092,7 @@ void passengerFaceBehavior(float ear)
 }
 
 
+//¨€¶¸´◊≠p∫‚
 void Euclidean_distance_averag(Recognize &recognize, const std::string &Driver_Information, std::vector<float>&samplefea0,
     std::vector<float>&samplefea1){
     std::string sample0_files = Driver_Information + "/sample0.jpg";
@@ -1103,6 +1111,7 @@ void Euclidean_distance_averag(Recognize &recognize, const std::string &Driver_I
     printf("Euclidean_distance_averag\n");
 }
 
+//¨€¶¸´◊•≠ß°
 double calculSimilar_avg(std::vector<float>&croppedfea, std::vector<float>&samplefea0, std::vector<float>&samplefea1){
 
     double similar0 = calculSimilar(samplefea0, croppedfea);
@@ -1111,7 +1120,8 @@ double calculSimilar_avg(std::vector<float>&croppedfea, std::vector<float>&sampl
     return (similar0+similar1)/2;
 }
 
-/////////////////////////////////////
+//§H¡y√—ßO
+//∞—¶“https://github.com/liguiyuan/mobilefacenet-ncnn 
 int face_recongition(cv::VideoCapture &mVideoCapture, cv::Mat &frame, Recognize &recognize, int &name_count,UltraFace &ultraface){
     
     char verification_text[256]="Driver is being authenticated";
@@ -1122,12 +1132,10 @@ int face_recongition(cv::VideoCapture &mVideoCapture, cv::Mat &frame, Recognize 
     double time;  
 
     cv::Mat m_roi ;
-    
-    
-	
+
 	
     while(1){
-		//ÊôÇÈñì10sÂà§Êñ∑
+		//ßP¬_¨Oß_≥sƒÚ10¨Ìø˘ª~ 
         if(time > 10500.0f){
             cv::imwrite("./image/error.jpg",frame);
             cv::waitKey(500);
@@ -1144,7 +1152,7 @@ int face_recongition(cv::VideoCapture &mVideoCapture, cv::Mat &frame, Recognize 
         ultraface.detect(inmat, face_info);
 		
         
-
+		//≠p∫‚®C≠”¡y 
         for(size_t i = 0; i < face_info.size(); i++)
         {
             auto face = face_info[i];
@@ -1157,26 +1165,32 @@ int face_recongition(cv::VideoCapture &mVideoCapture, cv::Mat &frame, Recognize 
                 int centerX = (face.x1 + face.x2) / 2;
                 
                 
-                
+                //¶≥ÆƒΩd≥Ú 
                 cv::Rect face_roi = cv::Rect(frame.cols/2, 0, frame.cols/2, frame.rows);
                 
                 if(centerX > frame.cols/2 ){
-                    if(flag_face){
+                    //≠pÆ…∂}©l 
+					if(flag_face){
                             start_t_recong = ncnn::get_current_time();
                             flag_face = false;
                         }
                     
+                    //¬^®˙¡y≥°∑”§˘ 
                     m_roi = frame(cv::Rect(x,y,w,h));
-                    cv::imwrite("a.jpg",m_roi);
+                    //cv::imwrite("a.jpg",m_roi);
                     cv::Mat croppedImage;
                     std::vector<float> croppedfea;
                     m_roi.copyTo(croppedImage);
+                    
+                    //≠p∫‚¡yØSºx≠» 
                     recognize.start(croppedImage, croppedfea);
                     //double similar = calculSimilar(samplefea1, croppedfea);
                     cv::rectangle(frame, face_roi, cv::Scalar(0, 255, 0), 2, 8, 0);
                     
                     for (int i = 0; i < name_count ;i++){
                         sprintf(name_path, "User-information/%s", name_text[i]);
+                        
+                        //§ÒπÔ¨€¶¸´◊ 
                         Euclidean_distance_averag(recognize, name_path, samplefea0, samplefea1);
                         double similar = calculSimilar_avg(croppedfea, samplefea0, samplefea1);
                         printf("similar = %f \n", similar);
@@ -1188,18 +1202,18 @@ int face_recongition(cv::VideoCapture &mVideoCapture, cv::Mat &frame, Recognize 
                             break;
                         }
                     }
-                    //ÁßíÊï∏Ë®àÊôÇ
-                        end = ncnn::get_current_time();
+                    end = ncnn::get_current_time();
 
-                        time = end - start_t_recong;
-                        int chose = time/1000;
-                        if(chose<10)
-                        cv::putText(frame,std::to_string(chose),cv::Point(15,40),cv::FONT_HERSHEY_COMPLEX,1.5,cv::Scalar(0,255,0),2);
+                    time = end - start_t_recong;
+                    int chose = time/1000;
+                    if(chose<10)
+                    cv::putText(frame,std::to_string(chose),cv::Point(15,40),cv::FONT_HERSHEY_COMPLEX,1.5,cv::Scalar(0,255,0),2);
 
 
                 }
                 else{
                     cv::rectangle(frame, face_roi, cv::Scalar(0, 0, 255), 2, 8, 0);
+                    //≠pÆ…≠´∑s∂}±“ 
                     flag_face = true;
                 }
 
@@ -1207,8 +1221,10 @@ int face_recongition(cv::VideoCapture &mVideoCapture, cv::Mat &frame, Recognize 
         //cv::putText(frame, verification_text, cv::Point(10, 240), cv::FONT_HERSHEY_COMPLEX, 1.2, cv::Scalar(0, 0, 255),2);
 		//result_recong = cv::imread("./image/fall.jpg");
 		//result_recong = cv::imread("./image/success.jpg");
+		//•˛ø√πı≥]©w 
 		namedWindow("output",CV_WINDOW_NORMAL);
 		setWindowProperty("output", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
+		//
 		//frame.copyTo(result_recong(cv::Rect(0,0,frame.cols,frame.rows)));
 		imshow("output",frame);
         if(cv::waitKey(1)=='q') break;
@@ -1218,6 +1234,9 @@ int face_recongition(cv::VideoCapture &mVideoCapture, cv::Mat &frame, Recognize 
 
 //////////////////////////////////////////////////////////////////////////////
 
+
+
+//±∆ß«§j§p§ÒπÔ 
 bool cmpArea(Object lsh, Object rsh) {
     if (lsh.rect.width > rsh.rect.width)
         return false;
@@ -1228,7 +1247,7 @@ bool cmpArea(Object lsh, Object rsh) {
 
 
 
-
+//§¿§ﬂªP∫ŒØvßP¬_
 int datection_f(cv::Mat& frame_f, ncnn::Net &pfld, std::vector<Object>& objects_f){
 
     char objCount = 0;
@@ -1241,6 +1260,8 @@ int datection_f(cv::Mat& frame_f, ncnn::Net &pfld, std::vector<Object>& objects_
         draw_objects(frame_f, objects_f);
 *********************************************/
 	std::vector<Object> objects_face;
+	
+	//¡y≥°§j§p±∆ß« 
 	for(size_t i = 0; i < objects_f.size(); i++)
     {
 		Object obj = objects_f[i];		
@@ -1255,6 +1276,7 @@ int datection_f(cv::Mat& frame_f, ncnn::Net &pfld, std::vector<Object>& objects_
 	
 	//cout << objects_face.size() << endl;
 	
+	
     for(size_t i = 0; 1 < objects_face.size() ? (i < 2) :( i < objects_face.size()); i++) 
     {
         Object& obj = objects_face[i];
@@ -1268,7 +1290,8 @@ int datection_f(cv::Mat& frame_f, ncnn::Net &pfld, std::vector<Object>& objects_
             int h = obj.rect.height;
             int shift = w * 0.01;
             int centerx = x + w/2;
-            //Á≠âÊØî‰æãÁ∏ÆÊîæÂõûÂéª
+            
+            //¡y≥°BBOXæ„≈È¶Ï∏m≥]©w 
             x = (x - shift) < 0 ? 0: x - shift;
             y = (y - shift) < 0 ? 0: y - shift;
             w = w + shift * 2;
@@ -1281,10 +1304,12 @@ int datection_f(cv::Mat& frame_f, ncnn::Net &pfld, std::vector<Object>& objects_
            
             cv::resize(ROI, ROI, cv::Size(112, 112));
             float landmarks[num_landmarks];
+            
+            //¡y≥°√ˆ¡‰¬I©w¶Ï 
             landmark_detector(pfld, ROI, landmarks, 112);
             
             
-            
+            //2D¡y≥°¶Ï∏m 
             std::vector<cv::Point2d> image_points;
             image_points.push_back( cv::Point2d(landmarks[33 * 2] * w + x, landmarks[33 * 2 + 1] * h + y) );    // LEFT_EYEBROW_LEFT
             image_points.push_back( cv::Point2d(landmarks[38 * 2] * w + x, landmarks[38 * 2 + 1] * h + y) );    // LEFT_EYEBROW_RIGHT
@@ -1302,6 +1327,7 @@ int datection_f(cv::Mat& frame_f, ncnn::Net &pfld, std::vector<Object>& objects_
             image_points.push_back( cv::Point2d(landmarks[16 * 2] * w + x, landmarks[16 * 2 + 1] * h + y) );    // CHIN
 
 
+			//¨€æ˜Øx∞}≥]©w 
             double focal_length = frame_f.cols; // Approximate focal length.
             Point2d center = cv::Point2d(frame_f.cols/2,frame_f.cols/2);
             cv::Mat camera_matrix = (cv::Mat_<double>(3,3) << focal_length, 0, center.x, 0 , focal_length, center.y, 0, 0, 1);
@@ -1319,17 +1345,23 @@ int datection_f(cv::Mat& frame_f, ncnn::Net &pfld, std::vector<Object>& objects_
             cv::Vec3f vec;
             vec=rotationMatrixToEulerAngles(rotation_matrix);
 
+
+			
             vec[0]*=180.0/3.141592653589793;
             vec[1]*=180.0/3.141592653589793;
             vec[2]*=180.0/3.141592653589793;
             //plot_pose_cube(frame_f,vec[1],-vec[0]+7,vec[2],landmarks[53 * 2] * w + x,landmarks[53 * 2 + 1] * h + y,w);
             std::cout << "Vector: " << vec << std::endl;
 
+
+			//µe√ˆ¡‰¬I 
             for(int i=0; i < num_landmarks / 2;i++){
                 cv::circle(frame_f, cv::Point(landmarks[i * 2] * w + x, landmarks[i * 2 + 1] * h + y), 1.7,cv::Scalar(0, 0, 255), -1);
             }
             float ear_value = ear(landmarks, frame_f.cols, frame_f.rows, x, y);
             printf("ear =  %f\n",ear_value);
+            
+            //ßP¬_¡y¨O¶b≠º´»©Œæræp 
             if(x < frame_f.cols/2)
             {
                 cv::putText(frame_f,"Pitch",cv::Point(15,frame_f.rows-30),cv::FONT_HERSHEY_COMPLEX,0.35,cv::Scalar(0,255,255),1);
@@ -1366,7 +1398,7 @@ int datection_f(cv::Mat& frame_f, ncnn::Net &pfld, std::vector<Object>& objects_
                 
                 int turn = 0;
                 
-                
+                //§¿§ﬂßP¬_
                 if(17<vec[0]  || vec[0]<-9 || vec[1]>45 || vec[1]<-26){
                 	turn =1;
                 	
@@ -1396,82 +1428,6 @@ int datection_f(cv::Mat& frame_f, ncnn::Net &pfld, std::vector<Object>& objects_
 }
 
 
-
-
-//Ââ©‰∏ãÂÖ¨ÂºèË®àÁÆó
-int datection_b(cv::Mat& frame_b, ncnn::Net &pfld, UltraFace &ultraface){
-
-    char objCount = 0;
-    
-    const int num_landmarks = 106 * 2;
-    float earValue;
-
-    cv::Mat m_roi ;
-    ncnn::Mat inmat = ncnn::Mat::from_pixels(frame_b.data, ncnn::Mat::PIXEL_BGR2RGB, frame_b.cols, frame_b.rows);
-    std::vector<FaceInfo> face_info;
-    ultraface.detect(inmat, face_info);
-
-/***************************
-    std::vector<Object> objects_b;
-    detect_yolov5(frame_b, objects_b);
-    //draw_objects(frame_b, objects_b);
-   // printf("popopop");
-*********************************/
-    for (int i = 0; i < face_info.size(); i++) 
-    {
-        auto face = face_info[i];
-        //printf("count %d  %f\n",obj.label ,obj.prob);
-        
-            int x = face.x1;
-            int y = face.y1;
-            int w = face.x2-face.x1;
-            int h = face.y2-face.y1;
-            int shift = w * 0.01;
-            //Á≠âÊØî‰æãÁ∏ÆÊîæÂõûÂéª
-            x = (x - shift) < 0 ? 0: x - shift;
-            y = (y - shift) < 0 ? 0: y - shift;
-            w = w + shift * 2;
-            h = h + shift * 2;
-            w = (w > frame_b.cols) ? frame_b.cols : w;
-            h = (h > frame_b.rows) ? frame_b.rows : h;
-            
-            m_roi = frame_b(cv::Rect(x,y,w,h));
-            //printf("count\n");
-            
-           
-            cv::resize(m_roi, m_roi, cv::Size(112, 112));
-            float landmarks[num_landmarks];
-            landmark_detector(pfld, m_roi, landmarks, 112);
-            for(int i=0; i < num_landmarks / 2;i++){
-                cv::circle(frame_b, cv::Point(landmarks[i * 2] * w + x, landmarks[i * 2 + 1] * h + y), 2,cv::Scalar(0, 0, 255), -1);
-            }
-            //runlandmark2(ROI, frame_f,frame_b, landmark, obj.rect.x, obj.rect.y,false);
-            //earValue = ear(landmarks, );
-           // printf("ear =%f\n",earValue);
-            float ear_value = ear(landmarks, frame_b.cols, frame_b.rows, x, y);
-            passengerFaceBehavior(ear_value);
-            //printf("ear =%f\n",ear_value);
-            objCount++;
-        
-		//printf("%d\n",num_box);    
-        //cv::putText(image_1, name_text[name_id], cv::Point(x1, y1-40), cv::FONT_HERSHEY_COMPLEX, 0.6, cv::Scalar(0, 0, 255),2);
-        //printf("dis = %f\n",dis);
-    }
-
-	if(face_info.size()== FP_ZERO && !objCount){
-		cv::putText(frame_b, "No face detected", cv::Point(10, 20), cv::FONT_HERSHEY_COMPLEX, 0.6, cv::Scalar(0, 0, 255),2);
-		
-	}
-    return 0;
-}
-
-
-
-
-
-
-
-
 int main()
 {
     int ix,jx;
@@ -1481,10 +1437,16 @@ int main()
     int name_count = 0;
     int name_id = 0;
     char szTest[256] = {0};
+    
+    //PFLDº“´¨¶Ï∏m 
     const char * param_path = "./model/ncnncols.param";
     const char * bin_path = "./model/ncnncols.bin";
+    
+    //¡y≥°¿À¥˙º“´¨¶Ï∏m 
     const char * param_path2 = "./model/RFB-320.param";
     const char * bin_path2 = "./model/RFB-320.bin";
+    
+    //¡n≠µƒµßi•Œ 
     struct args d1[4];
     pthread_t player;
     
@@ -1504,27 +1466,30 @@ int main()
     fclose(fp);
 
     //double start1 = ncnn::get_current_time();
-
-    snprintf(d1[0].path,sizeof(d1[0].path),"/home/es912-23/sound/look.wav");
+	
+	
+	
+	//¡n≠µƒµßi∞—º∆≥]©w 
+    snprintf(d1[0].path,sizeof(d1[0].path),"./sound/look.wav");
 	  //d1.path ="/home/es912-23/sound/look.wav";
 	  d1[0].sec = 1300000;
     
-    snprintf(d1[1].path,sizeof(d1[1].path),"/home/es912-23/sound/sleep.wav");
+    snprintf(d1[1].path,sizeof(d1[1].path),"./sound/sleep.wav");
 	  //d1.path ="/home/es912-23/sound/look.wav";
 	  d1[1].sec = 1300000;
 
-    snprintf(d1[2].path,sizeof(d1[2].path),"/home/es912-23/sound/phone.wav");
+    snprintf(d1[2].path,sizeof(d1[2].path),"./sound/phone.wav");
 	  //d1.path ="/home/es912-23/sound/look.wav";
 	  d1[2].sec = 1600000;
 
-    snprintf(d1[3].path,sizeof(d1[3].path),"/home/es912-23/sound/smoke.wav");
+    snprintf(d1[3].path,sizeof(d1[3].path),"./sound/smoke.wav");
 	  //d1.path ="/home/es912-23/sound/look.wav";
 	  d1[3].sec = 1300000;
 
 
 
 
-
+	//ƒµßiπœπ≥≈™§J 
     icon_head0 = cv::imread("icon/head0.jpg");
     icon_head1 = cv::imread("icon/head1.jpg");
     icon_smoke0 = cv::imread("icon/smoke0.jpg");
@@ -1535,7 +1500,7 @@ int main()
     icon_sleep1 = cv::imread("icon/sleep1.jpg");
                 
                 
-                
+    //¡y≥°3D¶Ï∏m 
     model_points.push_back(cv::Point3d(6.825897, 6.760612, 4.402142));               // LEFT_EYEBROW_LEFT
     model_points.push_back(cv::Point3d(1.330353, 7.122144, 6.903745));          // LEFT_EYEBROW_RIGHT
     model_points.push_back(cv::Point3d(-1.330353, 7.122144, 6.903745));       // RIGHT_EYEBROW_LEFTr
@@ -1552,9 +1517,8 @@ int main()
     model_points.push_back(cv::Point3d(0.000000, -7.415691, 4.070434));       // CHIN
                 
                 
-                
-    //double end1 = ncnn::get_current_time();
-    //double start2 = ncnn::get_current_time();
+
+    //ƒµßiπœπ≥§j§p≥]©w 
     cv::resize(icon_head0, icon_head0, cv::Size(iconsize, iconsize), 0, 0, cv::INTER_AREA);
     cv::resize(icon_head1, icon_head1, cv::Size(iconsize, iconsize), 0, 0, cv::INTER_AREA);
     cv::resize(icon_smoke0, icon_smoke0, cv::Size(iconsize, iconsize), 0, 0, cv::INTER_AREA);
@@ -1563,88 +1527,54 @@ int main()
     cv::resize(icon_phone1, icon_phone1, cv::Size(iconsize, iconsize), 0, 0, cv::INTER_AREA);
     cv::resize(icon_sleep0 ,icon_sleep0, cv::Size(iconsize, iconsize), 0, 0, cv::INTER_AREA);
     cv::resize(icon_sleep1, icon_sleep1, cv::Size(iconsize, iconsize), 0, 0, cv::INTER_AREA);
-    //double end2 = ncnn::get_current_time();
-    //double start3 = ncnn::get_current_time();
-            
+
+    
+    //PFLDº“´¨≈™§J 
     ncnn::Net pfld;
     pfld.load_param(param_path);
     pfld.load_model(bin_path);
+    
+    //¡y≥°¿À¥˙º“´¨≈™§J 
     UltraFace ultraface(bin_path2, param_path2, 320, 240, 1, 0.7,0.6);
 
                 
 
-            /*
-
-                Py_Initialize();
-
-                FILE* file = _Py_fopen("./python/open_led.py","r+");
-                PyRun_SimpleFile(file,"./python/open_led.py");
-                Py_Finalize(); 
-            */
-
                 
-                
+    //¡y≥°√—ßOº“´¨≈™§J      
     Recognize recognize("model/");
-    //double end3 = ncnn::get_current_time();
-    //double start4 = ncnn::get_current_time();
-                
+
 
     cv::Mat frame_f;
-    cv::Mat frame_b;
+    //cv::Mat frame_b;
     cv::Mat frame_recong;
-                
-                //cv::VideoCapture cap0("recongition1.mp4");
-    cv::VideoCapture cap1(0,CAP_V4L2);
-            // cv::VideoCapture cap2(2);
+    
+    //ºvπ≥≈™§J 
+    cv::VideoCapture cap(0,CAP_V4L2);
+   
+	//ºvπ≥≈™§J≥]©w 
+    cap.set(cv::CAP_PROP_FRAME_WIDTH , 1920);
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT , 1080);
+    cap.set(CAP_PROP_FOURCC, VideoWriter::fourcc('M', 'J', 'P', 'G'));
 
-                
+    
+    //¡y≥°√—ßO 
+    //name_id = face_recongition(cap,frame_recong, recognize, name_count,ultraface);
 
-               // cap0.set(cv::CAP_PROP_FRAME_WIDTH , 1280);
-              //  cap0.set(cv::CAP_PROP_FRAME_HEIGHT , 720);
-		
-    cap1.set(cv::CAP_PROP_FRAME_WIDTH , 1920);
-    cap1.set(cv::CAP_PROP_FRAME_HEIGHT , 1080);
-    cap1.set(CAP_PROP_FOURCC, VideoWriter::fourcc('M', 'J', 'P', 'G'));
-                //cap2.set(cv::CAP_PROP_FRAME_WIDTH , 640);
-                //cap2.set(cv::CAP_PROP_FRAME_HEIGHT , 360);
-
-    //double end4 = ncnn::get_current_time();
-    //name_id = face_recongition(cap1,frame_recong, recognize, name_count,ultraface);
-
-    if(name_id == 3){
-        /*
-        Py_Initialize();
-                    
-        FILE* file = _Py_fopen("./python/line_notify.py","r+");
-                    
-        PyRun_SimpleFile(file,"./pythonline_notify.py");
-                    
-        Py_Finalize();
-        */
-        return 0;
-    }
     int c=0,avg=0;
     while (true)
     {
         double start = ncnn::get_current_time();
-        bool ret = cap1.read(frame_f);
+        bool ret = cap.read(frame_f);
         if(!ret){
             break;
         }
-        //swit = cv::waitKey(1);
-                    
-                    
-        //cap1 >> frame_f;
+
 
         cv::resize(frame_f,frame_f, cv::Size(640,360),0,0,cv::INTER_AREA);
         //cv::resize(frame_b,frame_b, cv::Size(640,360),0,0,cv::INTER_AREA);
 
 
-
-                    
-
-        ///////////////////////
-                    
+        //ƒµßißP¬_≠´≥] 
         head_f = true;
         smoke_f = true;
         phone_f = true;
@@ -1654,13 +1584,9 @@ int main()
         light_f = true;
         temperature_f = true;
 
-                    
-                    
-
-
-        
-                    
+		//™´•Û∞ª¥˙•Œµ≤∫c≈È´≈ßi 
         std::vector<Object> objects_f;
+        
         //std::vector<Object> objects_b;
         //printf("%c\n",swit);
         /*
@@ -1678,10 +1604,16 @@ int main()
         }
         */
         //if(flagswit){
-            detect_yolov5(frame_f, objects_f);
+        
+        //YOLOV5™´•Û¿À¥˙ 
+        detect_yolov5(frame_f, objects_f);
                         //if(flagdraw)
-            draw_objects2(frame_f, objects_f);
-            datection_f(frame_f, pfld,objects_f);
+                        
+        //µephone&smoke™∫BBOX 
+        draw_objects(frame_f, objects_f);
+        
+        //§¿§ﬂªP∫ŒØvßP¬_ 
+        datection_f(frame_f, pfld,objects_f);
         //}
         //else{
                         //double start5 = ncnn::get_current_time();
@@ -1698,7 +1630,7 @@ int main()
                     
 
 
-                
+        //≥Ã≤◊πœ•‹ƒµßiße≤{ßP¬_ 
         if(head_f){
             head = icon_head0;
         }
@@ -1754,6 +1686,7 @@ int main()
 
         }
         */
+        //≥Ã≤◊¡n≠µƒµßiße≤{ßP¬_ 
         if(soundswitch){
             switch(sound_select){
                 case 0:
@@ -1777,6 +1710,8 @@ int main()
 
 
         //printf("%u %u %u %u\n",head_f,sleep_f,smoke_f,phone_f,sleep2_f);
+        
+        //πœ•‹ƒµßi∂K®Ïºvπ≥§W 
 		if(objects_f.size()!= NULL){
             //if(flagswit){
                 for(ix = 0;ix<60;ix++){
@@ -1813,7 +1748,7 @@ int main()
             */
         }
         else{
-        cv::putText(frame_f, "No face detected", cv::Point(10, 20), cv::FONT_HERSHEY_COMPLEX, 0.6, cv::Scalar(0, 0, 255),2);
+        	cv::putText(frame_f, "No face detected", cv::Point(10, 20), cv::FONT_HERSHEY_COMPLEX, 0.6, cv::Scalar(0, 0, 255),2);
         }
 
         double end = ncnn::get_current_time();
@@ -1839,18 +1774,19 @@ int main()
                     //result=cv::imread("./image/forward_back.jpg");
                     //frame_f.copyTo(result(cv::Rect(result.cols/2, 0, frame_f.cols, frame_f.rows)));
                     //frame_b.copyTo(result(cv::Rect(0, 0, frame_b.cols, frame_b.rows)));
+        //•˛ø√πı≥]©w 
 		namedWindow("output",CV_WINDOW_NORMAL);
 		setWindowProperty("output", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
+		
 					//cv::resize(frame_f,frame_f, cv::Size(640,360),0,0,cv::INTER_AREA);
         cv::imshow("output", frame_f);
-                    //system("clear");
         if(cv::waitKey(1)=='q')break; 
 
     }
                 
         printf("Avg Time:%7.2f \n",(double)avg/c);
         //cap0.release();
-        cap1.release();
+        cap.release();
         //cap2.release();
     return 0;
 }
