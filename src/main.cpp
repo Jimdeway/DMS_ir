@@ -1501,20 +1501,20 @@ int main()
                 
                 
     //Áy³¡3D¦ì¸m 
-    model_points.push_back(cv::Point3d(6.825897, 6.760612, 4.402142));               // LEFT_EYEBROW_LEFT
-    model_points.push_back(cv::Point3d(1.330353, 7.122144, 6.903745));          // LEFT_EYEBROW_RIGHT
-    model_points.push_back(cv::Point3d(-1.330353, 7.122144, 6.903745));       // RIGHT_EYEBROW_LEFTr
-    model_points.push_back(cv::Point3d(-6.825897, 6.760612, 4.402142));        // RIGHT_EYEBROW_RIGHT
+    model_points.push_back(cv::Point3d(6.825897, 6.760612, 4.402142));      // LEFT_EYEBROW_LEFT
+    model_points.push_back(cv::Point3d(1.330353, 7.122144, 6.903745));      // LEFT_EYEBROW_RIGHT
+    model_points.push_back(cv::Point3d(-1.330353, 7.122144, 6.903745));     // RIGHT_EYEBROW_LEFTr
+    model_points.push_back(cv::Point3d(-6.825897, 6.760612, 4.402142));     // RIGHT_EYEBROW_RIGHT
     model_points.push_back(cv::Point3d(5.311432, 5.485328, 3.987654));      // LEFT_EYE_LEFT
-    model_points.push_back(cv::Point3d(1.789930, 5.393625, 4.413414));       // LEFT_EYE_RIGHT
-    model_points.push_back(cv::Point3d(-1.789930, 5.393625, 4.413414));               // RIGHT_EYE_LEFT
-    model_points.push_back(cv::Point3d(-5.311432, 5.485328, 3.987654));          // RIGHT_EYE_RIGHT
-    model_points.push_back(cv::Point3d(2.005628, 1.409845, 6.165652));       // NOSE_LEFT
-    model_points.push_back(cv::Point3d(-2.005628, 1.409845, 6.165652));        // NOSE_RIGHT
-    model_points.push_back(cv::Point3d(2.774015, -2.080775, 5.048531));      // MOUTH_LEFT
-    model_points.push_back(cv::Point3d(-2.774015, -2.080775, 5.048531));       // MOUTH_RIGHT
-    model_points.push_back(cv::Point3d(0.000000, -3.116408, 6.097667));      // LOWER_LIP
-    model_points.push_back(cv::Point3d(0.000000, -7.415691, 4.070434));       // CHIN
+    model_points.push_back(cv::Point3d(1.789930, 5.393625, 4.413414));      // LEFT_EYE_RIGHT
+    model_points.push_back(cv::Point3d(-1.789930, 5.393625, 4.413414));     // RIGHT_EYE_LEFT
+    model_points.push_back(cv::Point3d(-5.311432, 5.485328, 3.987654));     // RIGHT_EYE_RIGHT
+    model_points.push_back(cv::Point3d(2.005628, 1.409845, 6.165652));      // NOSE_LEFT
+    model_points.push_back(cv::Point3d(-2.005628, 1.409845, 6.165652));     // NOSE_RIGHT
+    model_points.push_back(cv::Point3d(2.774015, -2.080775, 5.048531));     // MOUTH_LEFT
+    model_points.push_back(cv::Point3d(-2.774015, -2.080775, 5.048531));    // MOUTH_RIGHT
+    model_points.push_back(cv::Point3d(0.000000, -3.116408, 6.097667));     // LOWER_LIP
+    model_points.push_back(cv::Point3d(0.000000, -7.415691, 4.070434));     // CHIN
                 
                 
 
