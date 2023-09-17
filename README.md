@@ -1,4 +1,6 @@
 # DMS
+# Demo
+![image](https://github.com/Jimdeway/DMS_ir/blob/main/demo.gif)
 # ncnn creat
 ```
 $ git clone https://github.com/Tencent/ncnn.git
